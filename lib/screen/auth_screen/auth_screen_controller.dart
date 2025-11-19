@@ -20,6 +20,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthScreenController extends BaseController {
   TextEditingController fullNameController = TextEditingController();
+  TextEditingController mobileController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController forgetEmailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -53,10 +54,10 @@ class AuthScreenController extends BaseController {
         return showSnackBar(LKey.userNotFound.tr);
       }
 
-      if (credential.user?.emailVerified == false) {
-        stopLoader();
-        return showSnackBar(LKey.verifyEmailFirst.tr);
-      }
+      // if (credential.user?.emailVerified == false) {
+      //   stopLoader();
+      //   return showSnackBar(LKey.verifyEmailFirst.tr);
+      // }
 
       String fullname = credential.user?.displayName ?? email.split('@')[0];
       final user.User? data = await _registration(
@@ -87,6 +88,9 @@ class AuthScreenController extends BaseController {
     if (fullNameController.text.trim().isEmpty) {
       return showSnackBar(LKey.fullNameEmpty.tr);
     }
+    if (mobileController.text.trim().isEmpty) {
+      return showSnackBar(LKey.phoneNumber.tr);
+    }
     if (emailController.text.trim().isEmpty) {
       return showSnackBar(LKey.enterEmail.tr);
     }
@@ -109,12 +113,13 @@ class AuthScreenController extends BaseController {
           identity: emailController.text.trim(),
           loginMethod: LoginMethod.email,
           fullname: fullNameController.text.trim(),
+          mobile: mobileController.text.trim(),
           loginVia: LoginVia.loginInUser);
       credential.user?.updateDisplayName(fullNameController.text.trim());
       credential.user?.sendEmailVerification();
       Get.back();
       Get.back();
-      showSnackBar(LKey.verificationLinkSent.tr);
+      showSnackBar(LKey.registration.tr);
     }
   }
 
@@ -169,6 +174,7 @@ class AuthScreenController extends BaseController {
       {required String identity,
       required LoginMethod loginMethod,
       String? fullname,
+      String? mobile,
       required LoginVia loginVia,
       String? password}) async {
     String? deviceToken =
@@ -182,7 +188,8 @@ class AuthScreenController extends BaseController {
             identity: identity,
             loginMethod: loginMethod,
             deviceToken: deviceToken,
-            fullName: fullname);
+            fullName: fullname,
+            mobile: mobile);
       case LoginVia.logInFakeUser:
         userData = await UserService.instance.logInFakeUser(
             identity: identity,

@@ -41,6 +41,7 @@ class UserService {
 
   Future<User?> logInUser({
     String? fullName,
+    String? mobile,
     required String identity,
     String? deviceToken,
     required LoginMethod loginMethod,
@@ -49,6 +50,7 @@ class UserService {
         url: WebService.user.loginInUser,
         param: {
           Params.fullname: fullName,
+          Params.userMobileNo: mobile,
           Params.identity: identity,
           Params.deviceToken: deviceToken,
           Params.device: Platform.isAndroid ? 0 : 1,

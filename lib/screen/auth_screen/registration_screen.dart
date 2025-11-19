@@ -59,6 +59,11 @@ class RegistrationScreen extends StatelessWidget {
                     title: LKey.fullName.tr,
                   ),
                   TextFieldCustom(
+                    controller: controller.mobileController,
+                    title: LKey.phoneNumber.tr,
+                    keyboardType: TextInputType.phone,
+                  ),
+                  TextFieldCustom(
                     controller: controller.emailController,
                     title: LKey.email.tr,
                     keyboardType: TextInputType.emailAddress,

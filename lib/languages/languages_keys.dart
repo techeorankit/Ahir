@@ -234,6 +234,8 @@ class LKey {
   static const String weakPassword = "The password provided is too weak.";
   static const String accountExists =
       "The account already exists for that email.";
+  static const String registration =
+      "Registration Successfully.";
   static const String fullNameEmpty =
       "Please enter a full name. The full name field is empty.";
   static const String usernameEmpty =
