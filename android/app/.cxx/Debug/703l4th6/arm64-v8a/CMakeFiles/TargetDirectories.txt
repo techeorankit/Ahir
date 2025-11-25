@@ -1,0 +1,2 @@
+C:/Users/HP/AndroidStudioProjects/Ahir/android/app/.cxx/Debug/703l4th6/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/HP/AndroidStudioProjects/Ahir/android/app/.cxx/Debug/703l4th6/arm64-v8a/CMakeFiles/rebuild_cache.dir

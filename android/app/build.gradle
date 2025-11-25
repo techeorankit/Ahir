@@ -14,9 +14,10 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
+
     namespace = "com.retrytech.shortzz"
     compileSdk = 36
-    ndkVersion = "29.0.12077973"
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -35,8 +36,8 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 24
         targetSdk = 36
-        versionCode = 6
-        versionName = '1.0.6'
+        versionCode = 8
+        versionName = '1.0.8'
     }
 
     signingConfigs {
