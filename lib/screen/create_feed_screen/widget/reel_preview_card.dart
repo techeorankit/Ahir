@@ -18,6 +18,7 @@ class ReelPreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (controller.createType != CreateFeedType.reel) {
+      print("dddd ReelPreviewCard");
       return const SizedBox();
     }
     return Container(

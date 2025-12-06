@@ -354,7 +354,8 @@ class AuthScreenController extends BaseController {
 
       String? mobile,
 
-      String? otp}) async {
+      String? otp
+      }) async {
 
     await UserService.instance.otpSend(
         otp: otp,

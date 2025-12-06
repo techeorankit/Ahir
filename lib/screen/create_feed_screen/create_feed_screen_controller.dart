@@ -9,6 +9,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:retrytech_plugin/retrytech_plugin.dart';
 import 'package:shortzz/common/controller/base_controller.dart';
 import 'package:shortzz/common/extensions/common_extension.dart';
@@ -279,10 +280,11 @@ class CreateFeedScreenController extends BaseController {
     updateUploadingProgress(progress: 0);
 
     await Future.delayed(const Duration(seconds: 1));
-
+print("rrrrrrr");
     try {
       // Handle post upload based on post type
       switch (createType) {
+
         case CreateFeedType.reel:
           Loggers.info('Uploading Reel...');
           postResponse = await _handleReelUpload(content.value, postParams);
@@ -313,6 +315,9 @@ class CreateFeedScreenController extends BaseController {
       }
 
       // Check result and update progress
+      print("dddd ${postResponse?.message}");
+      print("dddd ${postResponse?.status}");
+      // print("dddd ${postResponse?.data.video.toString()}");
       if (postResponse?.status == true) {
         Post? post = postResponse?.data;
         if (post == null) {
@@ -436,17 +441,51 @@ class CreateFeedScreenController extends BaseController {
     // progress.value = 10;
     updateUploadingProgress(progress: 10);
 
+
+
+// Get app directory to save thumbnail
+    final Directory tempDir = await getTemporaryDirectory();
+    final String thumbFilePath = '${tempDir.path}/thumb_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+// Generate thumbnail and save to our path
+//     final String? generatedThumb = await VideoThumbnail.thumbnailFile(
+//       video: videoPath,
+//       thumbnailPath: thumbFilePath, // important!
+//       imageFormat: ImageFormat.JPEG,
+//       maxWidth: 250,
+//       quality: 75,
+//     );
+//
+//     if (generatedThumb == null) {
+//       Loggers.error('Thumbnail generation failed!');
+//       return;
+//     }
+
+// Assign to content
+//     content.thumbNail = generatedThumb;
+    XFile? finalThumbnailFile;
+    finalThumbnailFile = await MediaPickerHelper.shared
+        .extractThumbnail(videoPath: videoPath);
+
+    Loggers.info('Uploading thumbnail... ${content.thumbNail} ,${finalThumbnailFile.path} , $videoPath');
+
     // Step 5: Upload video & thumbnail
     Loggers.info('Uploading video...');
     FilePathModel uploadedVideo =
         await CommonService.instance.uploadFileGivePath(XFile(videoPath));
 
-    Loggers.info('Uploading thumbnail...');
+
+    // content.thumbNail=videoPath.thumbnail;
     FilePathModel uploadedThumb = await CommonService.instance
-        .uploadFileGivePath(XFile(content.thumbNail ?? ''));
+        .uploadFileGivePath(XFile(videoPath?? ''));
 
     // Step 6: Check upload success
+
+    print("dddd uploadedVideo ${uploadedVideo?.status}");
+    print("dddd uploadedVideomeee ${uploadedVideo?.message}");
+    print("dddd uploadedThumb ${uploadedThumb?.status}");
     if (uploadedVideo.status == false || uploadedThumb.status == false) {
+      Loggers.info('Uploading video status');
       deleteFiles([videoPath, content.thumbNail, extractAudioPath]);
       return failedResponseSnackBar(message: uploadedVideo.message);
     }
