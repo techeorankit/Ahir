@@ -139,6 +139,7 @@ dependencies:
 
 
 
+
   ### 🔌 Custom Plugins
   retrytech_plugin:
     git:
@@ -148,11 +149,11 @@ dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/logo-new.png"
+  image_path: "assets/images/logo.jpg"
 
 flutter_native_splash:
-  color: "#ffffff"        # splash background color
-  image: "assets/images/logo-new.png"  # your splash logo
+  color: "#000000"        # splash background color
+  image: "assets/images/logo.jpg"  # your splash logo
   android: true
   ios: true
   remove_alpha_ios: true

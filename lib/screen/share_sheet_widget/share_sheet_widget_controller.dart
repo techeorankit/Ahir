@@ -10,6 +10,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:gal/gal.dart';
 import 'package:get/get.dart';
 import 'package:retrytech_plugin/retrytech_plugin.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shortzz/common/controller/base_controller.dart';
 import 'package:shortzz/common/extensions/common_extension.dart';
 import 'package:shortzz/common/extensions/list_extension.dart';
@@ -30,6 +31,7 @@ import 'package:shortzz/screen/share_sheet_widget/share_sheet_widget.dart';
 import 'package:shortzz/screen/share_sheet_widget/widget/more_user_sheet.dart';
 import 'package:shortzz/utilities/app_res.dart';
 import 'package:shortzz/utilities/firebase_const.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ShareSheetWidgetController extends BaseController {
   FirebaseFirestore db = FirebaseFirestore.instance;
@@ -128,13 +130,59 @@ class ShareSheetWidgetController extends BaseController {
     filterChatsUsers.value =
         chatsUsers.search(value, (p0) => p0.chatUser?.username ?? '');
   }
+  static const platform = MethodChannel('whatsapp_share');
+
+  Future<void> shareToWhatsAppDirect(String message) async {
+    try {
+      Share.share(message);
+    } catch (e) {
+      print("ERROR: $e");
+    }
+  }
+
 
   void onShareSheetBottomBtnTap(ShareOption type, String link,
       {Post? post}) async {
     final postId = post?.id;
 
+
+
+    void shareTextToWhatsApp(String message) async {
+      final url = "whatsapp://send?text=${Uri.encodeComponent(message)}";
+      final uri = Uri.parse(url);
+
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        throw "WhatsApp not installed";
+      }
+    }
+    // Future<void> shareDirectToWhatsApp(String message) async {
+    //   await FlutterShare.share(
+    //     title: 'Share',
+    //     text: message,
+    //     linkUrl: '',
+    //     chooserTitle: '',
+    //   );
+    // }
+    //
+
+     Future<void> shareText(String message) async {
+      final encodedMessage = Uri.encodeComponent(message);
+      final whatsappUrl = 'whatsapp://send?text=$encodedMessage';
+
+      if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
+        await launchUrl(Uri.parse(whatsappUrl));
+      } else {
+        // WhatsApp not installed
+        debugPrint('WhatsApp not installed on this device');
+      }
+    }
+
+
     Future<void> _handleUrlLaunch(String url, {String? fallbackUrl}) async {
       final result = await url.lunchUrl;
+
       Loggers.info('Handle Url launch : ${result.message}');
 
       Get.back();
@@ -150,8 +198,9 @@ class ShareSheetWidgetController extends BaseController {
 
     switch (type) {
       case ShareOption.whatsapp:
-        await _handleUrlLaunch(type.value(link),
-            fallbackUrl: AppRes.whatsappPlayStoreLink);
+        shareText(type.value(link));
+        // await _handleUrlLaunch(type.value(link),
+        //     fallbackUrl: AppRes.whatsappPlayStoreLink);
         break;
 
       case ShareOption.instagram:

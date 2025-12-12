@@ -10,6 +10,8 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugins.pathprovider.PathProviderPlugin
 import io.flutter.plugins.videoplayer.VideoPlayerPlugin
+import io.flutter.plugins.urllauncher.UrlLauncherPlugin   // ← ADD THIS
+
 
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -22,6 +24,9 @@ class MainActivity : FlutterActivity() {
         flutterEngine.plugins.add(PermissionHandlerPlugin())
         flutterEngine.plugins.add(JustAudioPlugin())
         flutterEngine.plugins.add(RetrytechPlugin())
+        flutterEngine.plugins.add(UrlLauncherPlugin())   // ← ADD THIS
+
+
 
     }
 }

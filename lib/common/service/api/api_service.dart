@@ -14,6 +14,7 @@ import 'package:shortzz/screen/session_expired_screen/session_expired_screen.dar
 import 'package:shortzz/utilities/const_res.dart';
 
 class CancelToken {
+
   bool _isCancelled = false;
 
   bool get isCancelled => _isCancelled;

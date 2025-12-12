@@ -57,6 +57,7 @@ class FeedScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     StoryView(controller: controller),
+
                     PostList(
                         posts: controller.posts,
                         isLoading: false.obs,

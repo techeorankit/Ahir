@@ -46,6 +46,7 @@ class PostList extends StatelessWidget {
           shrinkWrap: shrinkWrap,
           padding: EdgeInsets.only(bottom: AppBar().preferredSize.height / 2),
           itemBuilder: (context, index) {
+
             final post = posts[index];
             return _buildPostCard(post);
           },
