@@ -21,6 +21,8 @@ import 'package:shortzz/model/post_story/user_post_model.dart';
 import 'package:shortzz/model/user_model/user_model.dart';
 import 'package:shortzz/utilities/app_res.dart';
 
+import '../../../model/chat/group_model.dart';
+
 enum PostType {
   reel,
   image,
@@ -70,6 +72,22 @@ class PostService {
         cancelToken: cancelToken);
     return model.data ?? [];
   }
+
+  // Future<GroupData> GroupDataFetch(
+  //     {required String type, CancelToken? cancelToken}) async {
+  //   GroupModel model = await ApiService.instance.call(
+  //     url: WebService.post.groupDataFetch,
+  //     param: {
+  //       Params.limit: AppRes.paginationLimit,
+  //       Params.types: type,
+  //     },
+  //     fromJson: GroupModel.fromJson,
+  //     cancelToken: cancelToken,
+  //   );
+  //
+  //   return model.data ?? [];
+  // }
+
 
   Future<PostByIdModel> fetchPostById(
       {required int postId, int? commentId, int? replyId}) async {

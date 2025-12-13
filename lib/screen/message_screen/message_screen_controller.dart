@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:shortzz/common/controller/base_controller.dart';
 import 'package:shortzz/common/manager/logger.dart';
 import 'package:shortzz/common/manager/session_manager.dart';
@@ -11,13 +14,17 @@ import 'package:shortzz/model/user_model/user_model.dart';
 import 'package:shortzz/screen/dashboard_screen/dashboard_screen_controller.dart';
 import 'package:shortzz/utilities/firebase_const.dart';
 
+import '../../common/service/utils/web_service.dart';
+
 class MessageScreenController extends BaseController {
-  List<String> chatCategories = [LKey.chats.tr, LKey.requests.tr];
+
+  List<String> chatCategories = [LKey.chats.tr, LKey.requests.tr,LKey.group.tr];
   RxInt selectedChatCategory = 0.obs;
   FirebaseFirestore db = FirebaseFirestore.instance;
   PageController pageController = PageController();
   User? myUser = SessionManager.instance.getUser();
   RxList<ChatThread> chatsUsers = <ChatThread>[].obs;
+  List<dynamic> groupData = []; // Updated type
   RxList<ChatThread> requestsUsers = <ChatThread>[].obs;
   final dashboardController = Get.find<DashboardScreenController>();
 
@@ -26,10 +33,36 @@ class MessageScreenController extends BaseController {
     super.onInit();
     pageController = PageController(initialPage: selectedChatCategory.value);
     _listenToUserChatsAndRequests();
+    propertyListSearch();
   }
 
   void onPageChanged(int index) {
     selectedChatCategory.value = index;
+  }
+
+  Future<List<dynamic>> propertyListSearch() async {
+    // setState(() {
+    //   propertyData.clear();
+    // });
+    try {
+
+      // final userId = await UID;
+
+      final response = await http
+          .get(Uri.parse(WebService.post.groupDataFetch));
+      if (response.statusCode == 200) {
+
+          groupData = jsonDecode(response.body);
+
+        print("groupData $groupData");
+        return jsonDecode(response.body);
+      } else {
+        throw Exception("Server Error!");
+      }
+    } catch (e) {
+      debugPrint("Error fetching data: $e");
+      return [];
+    }
   }
 
   Future<void> _listenToUserChatsAndRequests() async {
@@ -99,8 +132,11 @@ class MessageScreenController extends BaseController {
 
       // Loggers.success('CHAT USER: ${chatsUsers.length}');
       // Loggers.success('REQUEST USER: ${requestsUsers.length}');
+
     });
   }
+
+
 
   void onLongPress(ChatThread chatConversation) {
     Get.bottomSheet(ConfirmationSheet(

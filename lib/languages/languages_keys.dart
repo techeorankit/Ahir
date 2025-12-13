@@ -80,6 +80,7 @@ class LKey {
   static const String message = "Message";
   static const String chats = "Chats";
   static const String requests = "Requests";
+  static const String group = "Groups";
   static const String followers = "Followers";
   static const String lvl = "LVL";
   static const String settings = "Settings";

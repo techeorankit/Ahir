@@ -12,6 +12,10 @@ import 'package:shortzz/utilities/color_res.dart';
 import 'package:shortzz/utilities/text_style_custom.dart';
 import 'package:shortzz/utilities/theme_res.dart';
 
+import '../../common/widget/full_name_with_blue_tick.dart';
+import '../chat_screen/chat_screen.dart';
+import 'GroupListView.dart';
+
 class MessageScreen extends StatelessWidget {
   const MessageScreen({super.key});
 
@@ -82,6 +86,7 @@ class MessageScreen extends StatelessWidget {
                     children: const [
                       ChatsListView(),
                       RequestsListView(),
+                      GroupListView(),
                     ],
                   ),
           ),
@@ -114,6 +119,7 @@ class ChatsListView extends StatelessWidget {
     });
   }
 }
+
 
 class RequestsListView extends StatelessWidget {
   const RequestsListView({super.key});

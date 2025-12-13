@@ -75,6 +75,7 @@ class _AddPostStory {
 
 class _Post {
   String fetchPostsDiscover = "${apiURL}post/fetchPostsDiscover";
+  String groupDataFetch = "${apiURL}post/groupDataFetch";
   String fetchPostById = "${apiURL}post/fetchPostById";
   String fetchPostsByLocation = "${apiURL}post/fetchPostsByLocation";
   String fetchPostsNearBy = "${apiURL}post/fetchPostsNearBy";

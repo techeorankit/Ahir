@@ -64,5 +64,6 @@ class ReelPreviewCard extends StatelessWidget {
         ],
       ),
     );
+
   }
 }
