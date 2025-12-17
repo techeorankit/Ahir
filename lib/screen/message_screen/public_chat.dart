@@ -2,10 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart' as html_core;  // Alias the flutter_widget_from_html_core
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart' as image_picker_lib;  // Alias the image_picker
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:shortzz/common/functions/media_picker_helper.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import '../../common/manager/logger.dart';
 import '../../common/manager/session_manager.dart';
@@ -85,6 +88,88 @@ class _ChatScreenState extends State<PublicChatScreen> {
         );
       }
     });
+  }
+
+
+  Future<String> getAddress(double lat, double lng) async {
+    final placemarks = await placemarkFromCoordinates(lat, lng);
+    final place = placemarks.first;
+    return '${place.street}, ${place.locality}';
+  }
+  Widget locationBubble(double lat, double lng) {
+    final url = 'https://www.google.com/maps?q=$lat,$lng';
+
+    return InkWell(
+      onTap: () async {
+        if (await canLaunchUrl(Uri.parse(url))) {
+          await launchUrl(Uri.parse(url));
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.green.shade700,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(Icons.location_on, color: Colors.white),
+            SizedBox(width: 8),
+            Text(
+              'Live Location',
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Future<void> locationUpload() async {
+    final position = await getCurrentLocation();
+
+    await FirebaseFirestore.instance
+        .collection('groups')
+        .doc(widget.groupId)
+        .collection('messages')
+        .add({
+      'type': 'location',
+      'latitude': position.latitude,
+      'longitude': position.longitude,
+      'sender': userId,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+  }
+
+
+  Future<Position> getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location service enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw 'Location services are disabled';
+    }
+
+    // Check permission
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw 'Location permission denied';
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw 'Location permission permanently denied';
+    }
+
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
   }
 
 
@@ -205,6 +290,14 @@ class _ChatScreenState extends State<PublicChatScreen> {
 
                     final isMe = sender == userId;
 
+                    if (data['type'] == 'location') {
+                      return locationBubble(
+                        data['latitude'],
+                        data['longitude'],
+                      );
+                    }
+
+
                     return Container(
                       margin: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 5),
@@ -300,6 +393,10 @@ class _ChatScreenState extends State<PublicChatScreen> {
                   ),
                 ),
 
+                IconButton(
+                  onPressed: locationUpload,
+                  icon: const Icon(Icons.location_on_rounded, color: Colors.grey),
+                ),
                 IconButton(
                   onPressed: imageUpload,
                   icon: const Icon(Icons.image, color: Colors.grey),
